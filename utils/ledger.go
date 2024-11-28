@@ -15,7 +15,6 @@ import (
 var logger = log.NewLogger("ledgersql.utils")
 
 var registerCmd = []string{
-	"ledger",
 	"register",
 	"--cleared",
 	"--sort=date",
@@ -23,7 +22,6 @@ var registerCmd = []string{
 	"--format=%(date) %(account) %(quantity(amount)) %(quantity(total)) %(payee)\n",
 }
 var accountsCmd = []string{
-	"ledger",
 	"accounts",
 	"--no-pager",
 }
@@ -100,7 +98,9 @@ func getTransactions(c config.Config, account string) ([]Transaction, error) {
 }
 
 func runCommand(c config.Config, cmdString []string) ([]string, error) {
-	cmd := exec.Command(cmdString[0], cmdString[1:]...)
+	file := fmt.Sprintf("-f=%s", c.DataFile)
+	args := append([]string{file}, cmdString...)
+	cmd := exec.Command("ledger", args...)
 	cmd.Dir = c.DataDir
 
 	var outb strings.Builder

@@ -1,3 +1,5 @@
+github.com/akerl/timber/v2 v2.0.1 h1:hY4VCOJns7KsxwxP/ifSt3Rz9GZCfKewapaimObnA2E=
+github.com/akerl/timber/v2 v2.0.1/go.mod h1:jBjRGI2CWuvbZlrZkp1JO/X51pMlbg72NFy+Vnd59oI=
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/ghodss/yaml v1.0.0 h1:wQHKEahhL6wmXdzwWG11gIVCkOv05bNOh+Rxn0yngAk=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=

@@ -7,8 +7,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/akerl/timber/v2/log"
+
 	"github.com/akerl/ledgersql/config"
 )
+
+var logger = log.NewLogger("ledgersql.utils")
 
 var registerCmd = []string{
 	"ledger",
@@ -39,6 +43,7 @@ func GetLedger(c config.Config) ([]string, []Transaction, error) {
 	if err != nil {
 		return []string{}, []Transaction{}, err
 	}
+	logger.DebugMsgf("found %d accounts", len(accounts))
 
 	t := []Transaction{}
 	for _, account := range accounts {
@@ -56,6 +61,7 @@ func getAccounts(c config.Config) ([]string, error) {
 }
 
 func getTransactions(c config.Config, account string) ([]Transaction, error) {
+	logger.DebugMsgf("loading transactions from account: %s", account)
 	joinedCmd := append(registerCmd, account)
 	lines, err := runCommand(c, joinedCmd)
 	if err != nil {
@@ -89,6 +95,7 @@ func getTransactions(c config.Config, account string) ([]Transaction, error) {
 			Payee:   fields[4],
 		}
 	}
+	logger.DebugMsgf("found %d transactions on account", len(t))
 	return t, nil
 }
 

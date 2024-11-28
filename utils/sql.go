@@ -24,11 +24,13 @@ func WriteSQL(c config.Config, t []Transaction) error {
 		c.DatabasePassword,
 		c.DatabaseHost,
 	)
+	logger.DebugMsgf("connecting to database: %s", c.DatabaseHost)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return err
 	}
 
+	logger.DebugMsg("starting transaction")
 	tx, err := db.Begin()
 	if err != nil {
 		return err
@@ -47,13 +49,16 @@ func WriteSQL(c config.Config, t []Transaction) error {
 		return err
 	}
 
+	logger.DebugMsg("committing transaction")
 	return tx.Commit()
 }
 
 func createNewTable(tx *sql.Tx) error {
+	logger.DebugMsg("dropping stale new table if it exists")
 	if _, err := tx.Exec(fmt.Sprintf(`DROP TABLE IF EXISTS "%s"`, newTable)); err != nil {
 		return err
 	}
+	logger.DebugMsg("creating new table")
 	_, err := tx.Exec(fmt.Sprintf(
 		`CREATE TABLE "%s"
 		date date NOT NULL,
@@ -67,6 +72,7 @@ func createNewTable(tx *sql.Tx) error {
 }
 
 func loadTransactions(tx *sql.Tx, t []Transaction) error {
+	logger.DebugMsgf("inserting %d transactions", len(t))
 	statement := fmt.Sprintf(
 		`INSERT INTO "%s"
 		(date, account, payee, amount, total)
@@ -90,6 +96,7 @@ func loadTransactions(tx *sql.Tx, t []Transaction) error {
 }
 
 func swapTables(tx *sql.Tx) error {
+	logger.DebugMsg("renaming real table if it exists")
 	_, err := tx.Exec(
 		fmt.Sprintf(`ALTER TABLE IF EXISTS "%s" RENAME "%s"`, realTable, oldTable),
 	)
@@ -97,11 +104,13 @@ func swapTables(tx *sql.Tx) error {
 		return err
 	}
 
+	logger.DebugMsg("moving new table to real table")
 	_, err = tx.Exec(fmt.Sprintf(`ALTER TABLE "%s" RENAME "%s"`, newTable, realTable))
 	if err != nil {
 		return err
 	}
 
+	logger.DebugMsg("dropping old table")
 	_, err = tx.Exec(fmt.Sprintf(`"DROP TABLE IF EXISTS "%s"`, oldTable))
 	return err
 }

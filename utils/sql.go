@@ -112,6 +112,6 @@ func swapTables(tx *sql.Tx) error {
 	}
 
 	logger.DebugMsg("dropping old table")
-	_, err = tx.Exec(fmt.Sprintf(`"DROP TABLE IF EXISTS "%s"`, oldTable))
+	_, err = tx.Exec(fmt.Sprintf(`DROP TABLE IF EXISTS "%s"`, oldTable))
 	return err
 }

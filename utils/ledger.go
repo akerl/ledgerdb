@@ -98,7 +98,7 @@ func getTransactions(c config.Config, account string) ([]Transaction, error) {
 }
 
 func runCommand(c config.Config, cmdString []string) ([]string, error) {
-	file := fmt.Sprintf("-f=%s", c.DataFile)
+	file := fmt.Sprintf("--file=%s", c.DataFile)
 	args := append([]string{file}, cmdString...)
 	cmd := exec.Command("ledger", args...)
 	cmd.Dir = c.DataDir

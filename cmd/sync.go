@@ -13,33 +13,29 @@ import (
 	"github.com/akerl/ledgersql/config"
 )
 
-const (
-	registerCmd = []string{
-		"ledger",
-		"register",
-		"--cleared",
-		"--sort=date",
-		"--no-pager",
-		"--format='%(date) %(account) %(quantity(amount)) %(quantity(total)) %(payee)\n'",
-	}
-	accountsCmd = []string{
-		"ledger",
-		"accounts",
-		"--no-pager",
-	}
-)
+var registerCmd = []string{
+	"ledger",
+	"register",
+	"--cleared",
+	"--sort=date",
+	"--no-pager",
+	"--format='%(date) %(account) %(quantity(amount)) %(quantity(total)) %(payee)\n'",
+}
+var accountsCmd = []string{
+	"ledger",
+	"accounts",
+	"--no-pager",
+}
 
 type transaction struct {
 	Time    time.Time
 	Account string
-	Change  float64
+	Amount  float64
 	Total   float64
 	Payee   string
 }
 
-func syncRunner(cmd *cobra.Command, args []string) error {
-	flags := cmd.Flags()
-
+func syncRunner(_ *cobra.Command, args []string) error {
 	if len(args) < 1 {
 		return fmt.Errorf("no config file provided")
 	}
@@ -49,14 +45,18 @@ func syncRunner(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	ledger, err := getLedger(c)
+	_, err = getLedger(c)
 	if err != nil {
 		return err
 	}
+	return nil
 }
 
-func getLedger(c *ledgersql.Config) ([]transaction, error) {
+func getLedger(c config.Config) ([]transaction, error) {
 	accounts, err := getAccounts(c)
+	if err != nil {
+		return []transaction{}, err
+	}
 
 	t := []transaction{}
 	for _, account := range accounts {
@@ -64,44 +64,59 @@ func getLedger(c *ledgersql.Config) ([]transaction, error) {
 		if err != nil {
 			return []transaction{}, err
 		}
-		t = append(t, newT)
+		t = append(t, newT...)
 	}
 	return t, nil
 }
 
-func getAccounts(c *ledgersql.Config) ([]string, error) {
-	return runCommand(accountsCmd)
+func getAccounts(c config.Config) ([]string, error) {
+	return runCommand(c, accountsCmd)
 }
 
-func getTransactions(c *ledgersql.Config, account string) ([]transaction, error) {
-	lines, err := runCommand(registerCmd)
-	t := make([]transactions, len(lines))
+func getTransactions(c config.Config, account string) ([]transaction, error) {
+	joinedCmd := append(registerCmd, account)
+	lines, err := runCommand(c, joinedCmd)
+	if err != nil {
+		return []transaction{}, err
+	}
+
+	t := make([]transaction, len(lines))
 
 	for index, line := range lines {
-		fields := strings.SplitN(line, 5)
+		fields := strings.SplitN(line, " ", 5)
 		date, err := time.Parse("2026/2/1", fields[0])
 		if err != nil {
 			return []transaction{}, err
 		}
+		amount, err := strconv.ParseFloat(fields[2], 64)
+		if err != nil {
+			return []transaction{}, err
+		}
+
+		total, err := strconv.ParseFloat(fields[3], 64)
+		if err != nil {
+			return []transaction{}, err
+		}
+
 		t[index] = transaction{
 			Time:    date,
 			Account: fields[1],
-			Amount:  strconv.ParseFloat(fields[2], 64),
-			Total:   strconv.ParseFloat(fields[3], 64),
+			Amount:  amount,
+			Total:   total,
 			Payee:   fields[4],
 		}
 	}
 	return t, nil
 }
 
-func runCommand(c *ledgersql.Config, cmd []string) ([]string, err) {
-	cmd := exec.Command(cmd[0], cmd[1:]...)
-	e.Dir = c.DataDir
+func runCommand(c config.Config, cmdString []string) ([]string, error) {
+	cmd := exec.Command(cmdString[0], cmdString[1:]...)
+	cmd.Dir = c.DataDir
 
 	var outb bytes.Buffer
-	e.Stdout = &outb
+	cmd.Stdout = &outb
 
-	err := e.Run()
+	err := cmd.Run()
 	if err != nil {
 		return []string{}, err
 	}

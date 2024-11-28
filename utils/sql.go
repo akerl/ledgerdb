@@ -60,12 +60,13 @@ func createNewTable(tx *sql.Tx) error {
 	}
 	logger.DebugMsg("creating new table")
 	_, err := tx.Exec(fmt.Sprintf(
-		`CREATE TABLE "%s"
-		date date NOT NULL,
-		account text NOT NULL,
-		payee text NOT NULL,
-		amount money NOT NULL,
-		total money NOT NULL`,
+		`CREATE TABLE "%s" (
+			date date NOT NULL,
+			account text NOT NULL,
+			payee text NOT NULL,
+			amount money NOT NULL,
+			total money NOT NULL
+		)`,
 		newTable,
 	))
 	return err

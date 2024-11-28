@@ -99,14 +99,14 @@ func loadTransactions(tx *sql.Tx, t []Transaction) error {
 func swapTables(tx *sql.Tx) error {
 	logger.DebugMsg("renaming real table if it exists")
 	_, err := tx.Exec(
-		fmt.Sprintf(`ALTER TABLE IF EXISTS "%s" RENAME "%s"`, realTable, oldTable),
+		fmt.Sprintf(`ALTER TABLE IF EXISTS "%s" RENAME TO "%s"`, realTable, oldTable),
 	)
 	if err != nil {
 		return err
 	}
 
 	logger.DebugMsg("moving new table to real table")
-	_, err = tx.Exec(fmt.Sprintf(`ALTER TABLE "%s" RENAME "%s"`, newTable, realTable))
+	_, err = tx.Exec(fmt.Sprintf(`ALTER TABLE "%s" RENAME TO "%s"`, newTable, realTable))
 	if err != nil {
 		return err
 	}

@@ -9,8 +9,7 @@ import (
 // Config defines a LedgerSQL sync configuration
 type Config struct {
 	DataDir          string `json:"data_dir"`
-	DatabaseIP       string `json:"database_up"`
-	DatabaseUser     string `json:"database_user"`
+	DatabaseHost     string `json:"database_host"`
 	DatabasePassword string `json:"database_password"`
 }
 

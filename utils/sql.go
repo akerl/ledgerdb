@@ -76,7 +76,7 @@ func loadTransactions(tx *sql.Tx, t []Transaction) error {
 	logger.DebugMsgf("inserting %d transactions", len(t))
 	statement := fmt.Sprintf(
 		`INSERT INTO "%s"
-		(date, account, payee, amount, total)
+		(time, account, payee, amount, total)
 		VALUES ($1, $2, $3, $4, $5)`,
 		newTable,
 	)

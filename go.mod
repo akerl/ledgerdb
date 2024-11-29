@@ -1,4 +1,4 @@
-module github.com/akerl/ledgersql
+module github.com/akerl/ledgerdb
 
 go 1.22.5
 

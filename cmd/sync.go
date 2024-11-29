@@ -6,11 +6,11 @@ import (
 	"github.com/akerl/timber/v2/log"
 	"github.com/spf13/cobra"
 
-	"github.com/akerl/ledgersql/config"
-	"github.com/akerl/ledgersql/utils"
+	"github.com/akerl/ledgerdb/config"
+	"github.com/akerl/ledgerdb/utils"
 )
 
-var logger = log.NewLogger("ledgersql.sync")
+var logger = log.NewLogger("ledgerdb.sync")
 
 func syncRunner(_ *cobra.Command, args []string) error {
 	if len(args) < 1 {

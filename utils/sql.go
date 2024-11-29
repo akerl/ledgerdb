@@ -8,7 +8,7 @@ import (
 	// using Postgres for SQL
 	_ "github.com/lib/pq"
 
-	"github.com/akerl/ledgersql/config"
+	"github.com/akerl/ledgerdb/config"
 )
 
 const (

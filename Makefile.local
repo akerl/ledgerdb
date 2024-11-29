@@ -1,2 +1,2 @@
-PACKAGE = ledgersql
+PACKAGE = ledgerdb
 VERSION_VAR_PATH = version.Version

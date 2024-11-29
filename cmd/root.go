@@ -5,7 +5,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:           "ledgersql",
+	Use:           "ledgerdb",
 	Short:         "Export ledger data to PostgreSQL database",
 	SilenceUsage:  true,
 	SilenceErrors: true,

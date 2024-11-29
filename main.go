@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/akerl/ledgersql/cmd"
+	"github.com/akerl/ledgerdb/cmd"
 )
 
 func main() {

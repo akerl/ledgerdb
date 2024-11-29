@@ -9,10 +9,10 @@ import (
 
 	"github.com/akerl/timber/v2/log"
 
-	"github.com/akerl/ledgersql/config"
+	"github.com/akerl/ledgerdb/config"
 )
 
-var logger = log.NewLogger("ledgersql.utils")
+var logger = log.NewLogger("ledgerdb.utils")
 
 var registerCmd = []string{
 	"register",

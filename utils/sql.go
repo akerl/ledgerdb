@@ -61,7 +61,7 @@ func createNewTable(tx *sql.Tx) error {
 	logger.DebugMsg("creating new table")
 	_, err := tx.Exec(fmt.Sprintf(
 		`CREATE TABLE "%s" (
-			time date NOT NULL,
+			time timestamp with time zone NOT NULL,
 			account text NOT NULL,
 			payee text NOT NULL,
 			amount numeric NOT NULL,
@@ -83,7 +83,7 @@ func loadTransactions(tx *sql.Tx, t []Transaction) error {
 	for _, item := range t {
 		_, err := tx.Exec(
 			statement,
-			item.Time.Format(time.DateOnly),
+			item.Time.Format(time.RFC3339),
 			item.Account,
 			item.Payee,
 			item.Amount,

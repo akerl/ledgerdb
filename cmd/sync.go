@@ -29,7 +29,7 @@ func syncRunner(_ *cobra.Command, args []string) error {
 	}
 	logger.InfoMsgf("parsed %d transactions from %d accounts", len(transactions), len(accounts))
 
-	return utils.WriteSQL(c, transactions)
+	return utils.WriteInflux(c, transactions)
 }
 
 var syncCmd = &cobra.Command{

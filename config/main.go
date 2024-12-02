@@ -8,10 +8,8 @@ import (
 
 // Config defines a LedgerSQL sync configuration
 type Config struct {
-	DataDir          string `json:"data_dir"`
-	DataFile         string `json:"data_file"`
-	DatabaseHost     string `json:"database_host"`
-	DatabasePassword string `json:"database_password"`
+	DataDir  string `json:"data_dir"`
+	DataFile string `json:"data_file"`
 }
 
 // NewConfig loads a config from a given file or the default location

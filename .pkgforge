@@ -1,4 +1,4 @@
-name 'ledgersql'
+name 'ledgerdb'
 org 'akerl'
 
 source(

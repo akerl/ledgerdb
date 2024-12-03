@@ -30,9 +30,29 @@ var accountsCmd = []string{
 type Transaction struct {
 	Time    time.Time
 	Account string
+	Payee   string
 	Amount  float64
 	Total   float64
-	Payee   string
+}
+
+// ToPoints returns a Transaction as a set of Influx Points
+func (t Transaction) ToPoints() []Point {
+	return []Point{
+		Point{
+			Time:    t.Time,
+			Account: t.Account,
+			Payee:   t.Payee,
+			Field:   "amount",
+			Value:   t.Amount,
+		},
+		Point{
+			Time:    t.Time,
+			Account: t.Account,
+			Payee:   t.Payee,
+			Field:   "total",
+			Value:   t.Total,
+		},
+	}
 }
 
 // GetLedger returns all ledgers and transactions
@@ -79,7 +99,6 @@ func getTransactions(c config.Config, account string) ([]Transaction, error) {
 		if err != nil {
 			return []Transaction{}, err
 		}
-
 		total, err := strconv.ParseFloat(fields[3], 64)
 		if err != nil {
 			return []Transaction{}, err

@@ -8,8 +8,12 @@ import (
 
 // Config defines a LedgerSQL sync configuration
 type Config struct {
-	DataDir  string `json:"data_dir"`
-	DataFile string `json:"data_file"`
+	DataDir      string `json:"data_dir"`
+	DataFile     string `json:"data_file"`
+	InfluxURL    string `json:"influx_url"`
+	InfluxToken  string `json:"influx_token"`
+	InfluxOrg    string `json:"influx_org"`
+	InfluxBucket string `json:"influx_bucket"`
 }
 
 // NewConfig loads a config from a given file or the default location

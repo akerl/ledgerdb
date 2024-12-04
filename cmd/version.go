@@ -5,12 +5,12 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/akerl/ledgerdb/version"
+	"github.com/akerl/ledgergraph/version"
 )
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Print the version of ledgerdb",
+	Short: "Print the version of ledgergraph",
 	Run: func(_ *cobra.Command, _ []string) {
 		fmt.Printf("%s\n", version.Version)
 	},

@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -9,10 +11,10 @@ import (
 
 	"github.com/akerl/timber/v2/log"
 
-	"github.com/akerl/ledgerdb/config"
+	"github.com/akerl/ledgergraph/config"
 )
 
-var logger = log.NewLogger("ledgerdb.utils")
+var logger = log.NewLogger("ledgergraph.utils")
 
 var registerCmd = []string{
 	"register",
@@ -35,31 +37,46 @@ type Transaction struct {
 	Total   float64
 }
 
-// ToPoints returns a Transaction as a set of Influx Points
-func (t Transaction) ToPoints() []Point {
-	return []Point{
-		Point{
-			Time:    t.Time,
-			Account: t.Account,
-			Payee:   t.Payee,
-			Field:   "amount",
-			Value:   t.Amount,
-		},
-		Point{
-			Time:    t.Time,
-			Account: t.Account,
-			Payee:   t.Payee,
-			Field:   "total",
-			Value:   t.Total,
-		},
+var cache = []Transaction{}
+
+// SyncLedger runs a loop to continously update the ledger file
+func SyncLedger(c config.Config) {
+	for {
+		var err error
+		cache, err = loadLedger(c)
+		if err != nil {
+			logger.InfoMsgf("failed automatic sync: %s", err)
+		}
+		time.Sleep(30 * time.Minute)
 	}
 }
 
-// GetLedger returns all ledgers and transactions
-func GetLedger(c config.Config) ([]string, []Transaction, error) {
+// ReadLedgerFunc returns a function that reads the current state of the ledger file
+func ReadLedgerFunc(c config.Config) func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, _ *http.Request) {
+		var err error
+		if len(cache) == 0 {
+			cache, err = loadLedger(c)
+			if err != nil {
+				http.Error(w, "failed to load ledger", http.StatusInternalServerError)
+				logger.InfoMsgf("failed to load ledger: %s", err)
+				return
+			}
+		}
+		w.Header().Set("Content-Type", "application/json")
+		err = json.NewEncoder(w).Encode(cache)
+		if err != nil {
+			http.Error(w, "failed to marshal", http.StatusInternalServerError)
+			logger.InfoMsgf("failed to marshal: %s", err)
+			return
+		}
+	}
+}
+
+func loadLedger(c config.Config) ([]Transaction, error) {
 	accounts, err := getAccounts(c)
 	if err != nil {
-		return []string{}, []Transaction{}, err
+		return []Transaction{}, err
 	}
 	logger.DebugMsgf("found %d accounts", len(accounts))
 
@@ -67,11 +84,11 @@ func GetLedger(c config.Config) ([]string, []Transaction, error) {
 	for _, account := range accounts {
 		newT, err := getTransactions(c, account)
 		if err != nil {
-			return []string{}, []Transaction{}, err
+			return []Transaction{}, err
 		}
 		t = append(t, newT...)
 	}
-	return accounts, t, nil
+	return t, nil
 }
 
 func getAccounts(c config.Config) ([]string, error) {

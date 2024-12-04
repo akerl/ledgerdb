@@ -1,4 +1,4 @@
-name 'ledgerdb'
+name 'ledgergraph'
 org 'akerl'
 
 source(

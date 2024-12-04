@@ -1,20 +1,20 @@
-ledgerdb
+ledgergraph
 =========
 
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/akerl/ledgerdb/build.yml?branch=main)](https://github.com/akerl/ledgerdb/actions)
-[![GitHub release](https://img.shields.io/github/release/akerl/ledgerdb.svg)](https://github.com/akerl/ledgerdb/releases)
-[![License](https://img.shields.io/github/license/akerl/ledgerdb)](https://github.com/akerl/ledgerdb/blob/master/LICENSE)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/akerl/ledgergraph/build.yml?branch=main)](https://github.com/akerl/ledgergraph/actions)
+[![GitHub release](https://img.shields.io/github/release/akerl/ledgergraph.svg)](https://github.com/akerl/ledgergraph/releases)
+[![License](https://img.shields.io/github/license/akerl/ledgergraph)](https://github.com/akerl/ledgergraph/blob/master/LICENSE)
 
-ledgerdb exports transaction data from ledger into PostgreSQL
+ledgergraph serves visual graphs based on ledger reports
 
 ## Usage
 
 ## Installation
 
 ```
-go install github.com/akerl/ledgerdb@latest
+go install github.com/akerl/ledgergraph@latest
 ```
 
 ## License
 
-ledgerdb is released under the MIT License. See the bundled LICENSE file for details.
+ledgergraph is released under the MIT License. See the bundled LICENSE file for details.
